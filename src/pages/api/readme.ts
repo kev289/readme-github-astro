@@ -9,10 +9,11 @@ function getDayOfYear(): number {
   return Math.floor(diff / oneDay);
 }
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
   // 1. Fetching Live Stats with Fallback mechanism
   const username = 'kev289';
   const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN;
+  const theme = url.searchParams.get('theme') === 'light' ? 'light' : 'dark';
 
   let totalStars = 0;
   let totalCommits = 537; // Fallback
@@ -174,6 +175,26 @@ export const GET: APIRoute = async () => {
     console.error('Error fetching GitHub API, using fallback data:', error);
   }
 
+  const palette = theme === 'light'
+    ? {
+        background: '#ffffff',
+        surface: '#f6f8fa',
+        border: '#d0d7de',
+        text: '#24292f',
+        green: '#1a7f37',
+        gray: '#57606a',
+        blue: '#0969da',
+      }
+    : {
+        background: '#0d1117',
+        surface: '#161b22',
+        border: '#30363d',
+        text: '#ffffff',
+        green: '#4AF626',
+        gray: '#8b949e',
+        blue: '#58a6ff',
+      };
+
   // Generate dynamic Top Languages SVG tags
   let langSvg = '';
   topLanguages.forEach((lang, index) => {
@@ -184,7 +205,7 @@ export const GET: APIRoute = async () => {
     langSvg += `
   <!-- ${lang.name} Bar -->
   <text x="40" y="${yPos}" class="text-white font-12">${lang.name}</text>
-  <rect x="160" y="${rectYPos}" width="550" height="8" rx="4" fill="#161b22" stroke="#30363d"/>
+  <rect x="160" y="${rectYPos}" width="550" height="8" rx="4" fill="${palette.surface}" stroke="${palette.border}"/>
   <rect x="160" y="${rectYPos}" width="${fillWidth}" height="8" rx="4" fill="${lang.color}"/>
   <text x="810" y="${textYPos}" class="text-gray font-12" text-anchor="end">${lang.percentage}%</text>`;
   });
@@ -192,13 +213,13 @@ export const GET: APIRoute = async () => {
   // 2. SVG Markup generation
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 930" width="100%" height="100%">
   <style>
-    .terminal-bg { fill: #0d1117; }
-    .border-main { stroke: #30363d; stroke-width: 1; fill: none; }
-    .header-bar { fill: #161b22; stroke: #30363d; stroke-width: 1; }
-    .text-white { fill: #ffffff; font-family: "Courier New", Courier, monospace; }
-    .text-green { fill: #4AF626; font-family: "Courier New", Courier, monospace; }
-    .text-gray { fill: #8b949e; font-family: "Courier New", Courier, monospace; }
-    .text-blue { fill: #58a6ff; font-family: "Courier New", Courier, monospace; }
+    .terminal-bg { fill: ${palette.background}; }
+    .border-main { stroke: ${palette.border}; stroke-width: 1; fill: none; }
+    .header-bar { fill: ${palette.surface}; stroke: ${palette.border}; stroke-width: 1; }
+    .text-white { fill: ${palette.text}; font-family: "Courier New", Courier, monospace; }
+    .text-green { fill: ${palette.green}; font-family: "Courier New", Courier, monospace; }
+    .text-gray { fill: ${palette.gray}; font-family: "Courier New", Courier, monospace; }
+    .text-blue { fill: ${palette.blue}; font-family: "Courier New", Courier, monospace; }
     
     .font-bold { font-weight: bold; }
     .font-11 { font-size: 11px; }
@@ -234,12 +255,12 @@ export const GET: APIRoute = async () => {
   
   <!-- Open for Work Badge -->
   <rect x="40" y="135" width="122" height="22" rx="11" class="header-bar"/>
-  <circle cx="52" cy="146" r="4" fill="#4AF626"/>
+  <circle cx="52" cy="146" r="4" fill="${palette.green}"/>
   <text x="62" y="149" class="text-green font-bold font-11">Open for Work</text>
 
   <!-- Cyber Green Typewriter line -->
   <text x="40" y="190" class="text-green font-bold font-18">Full-Stack Developer <tspan class="cursor">|</tspan></text>
-  <line x1="40" y1="210" x2="810" y2="210" stroke="#30363d" stroke-width="1"/>
+  <line x1="40" y1="210" x2="810" y2="210" stroke="${palette.border}" stroke-width="1"/>
 
   <!-- TWO COLUMN MIDDLE GRID -->
   <!-- Left Column: About Section -->
@@ -259,7 +280,7 @@ export const GET: APIRoute = async () => {
   <!-- Right Column: GitHub Stats Card -->
   <rect x="480" y="235" width="330" height="230" rx="8" class="header-bar"/>
   <text x="500" y="265" class="text-gray font-12">// GITHUB STATS</text>
-  <line x1="500" y1="280" x2="790" y2="280" stroke="#30363d" stroke-width="1"/>
+  <line x1="500" y1="280" x2="790" y2="280" stroke="${palette.border}" stroke-width="1"/>
   
   <text x="500" y="325" class="text-gray font-14">Total Contributions</text>
   <text x="790" y="325" class="text-blue font-bold font-14" text-anchor="end">${totalCommits}</text>
@@ -274,7 +295,7 @@ export const GET: APIRoute = async () => {
   <text x="40" y="505" class="text-gray font-13">// TOP LANGUAGES</text>
   ${langSvg}
 
-  <line x1="40" y1="635" x2="810" y2="635" stroke="#30363d" stroke-width="1"/>
+  <line x1="40" y1="635" x2="810" y2="635" stroke="${palette.border}" stroke-width="1"/>
 
   <!-- TECH STACK SECTION -->
   <text x="40" y="660" class="text-gray font-13">// TECH STACK</text>

@@ -253,11 +253,6 @@ export const GET: APIRoute = async ({ url }) => {
   <text x="40" y="90" class="text-white font-bold font-32">Kevin Uribe</text>
   <text x="40" y="120" class="text-gray font-14">Software Engineer · Medellin · Colombia</text>
   
-  <!-- Open for Work Badge -->
-  <rect x="40" y="135" width="122" height="22" rx="11" class="header-bar"/>
-  <circle cx="52" cy="146" r="4" fill="${palette.green}"/>
-  <text x="62" y="149" class="text-green font-bold font-11">Open for Work</text>
-
   <!-- Cyber Green Typewriter line -->
   <text x="40" y="190" class="text-green font-bold font-18">Full-Stack Developer <tspan class="cursor">|</tspan></text>
   <line x1="40" y1="210" x2="810" y2="210" stroke="${palette.border}" stroke-width="1"/>

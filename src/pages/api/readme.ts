@@ -125,7 +125,7 @@ export const GET: APIRoute = async ({ url }) => {
       if (totalReposWithLanguage > 0) {
         const sortedLanguages = Object.entries(languageCounts)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 5);
+          .slice(0, 4);
 
         topLanguages = sortedLanguages.map(([name, count]) => {
           const percentage = Math.round(
@@ -354,52 +354,46 @@ export const GET: APIRoute = async ({ url }) => {
   <text x="40" y="600" class="text-gray font-13">// TECH STACK</text>
 
   <!-- Frontend Development Subheading -->
-  <text x="40" y="625" class="text-white font-bold font-12">Frontend Development</text>
+  <text x="40" y="628" class="text-white font-bold font-12">Frontend Development</text>
   <!-- TypeScript -->
-  <rect x="40" y="637" width="100" height="24" rx="4" class="header-bar"/>
-  <text x="90" y="653" class="text-gray font-12" text-anchor="middle">TypeScript</text>
+  <rect x="40" y="640" width="100" height="24" rx="4" class="header-bar"/>
+  <text x="90" y="656" class="text-gray font-12" text-anchor="middle">TypeScript</text>
   <!-- React -->
-  <rect x="150" y="637" width="70" height="24" rx="4" class="header-bar"/>
-  <text x="185" y="653" class="text-gray font-12" text-anchor="middle">React</text>
+  <rect x="150" y="640" width="70" height="24" rx="4" class="header-bar"/>
+  <text x="185" y="656" class="text-gray font-12" text-anchor="middle">React</text>
   <!-- Next.js -->
-  <rect x="230" y="637" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="270" y="653" class="text-gray font-12" text-anchor="middle">Next.js</text>
+  <rect x="230" y="640" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="270" y="656" class="text-gray font-12" text-anchor="middle">Next.js</text>
   <!-- Tailwind CSS -->
-  <rect x="320" y="637" width="105" height="24" rx="4" class="header-bar"/>
-  <text x="372.5" y="653" class="text-gray font-12" text-anchor="middle">Tailwind CSS</text>
-  <!-- Astro -->
-  <rect x="435" y="637" width="70" height="24" rx="4" class="header-bar"/>
-  <text x="470" y="653" class="text-gray font-12" text-anchor="middle">Astro</text>
+  <rect x="320" y="640" width="105" height="24" rx="4" class="header-bar"/>
+  <text x="372.5" y="656" class="text-gray font-12" text-anchor="middle">Tailwind CSS</text>
 
   <!-- Backend & Databases Subheading -->
-  <text x="40" y="690" class="text-white font-bold font-12">Backend &amp; Databases</text>
+  <text x="40" y="695" class="text-white font-bold font-12">Backend &amp; Databases</text>
   <!-- Node.js -->
-  <rect x="40" y="702" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="80" y="718" class="text-gray font-12" text-anchor="middle">Node.js</text>
+  <rect x="40" y="707" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="80" y="723" class="text-gray font-12" text-anchor="middle">Node.js</text>
   <!-- Python -->
-  <rect x="130" y="702" width="75" height="24" rx="4" class="header-bar"/>
-  <text x="167.5" y="718" class="text-gray font-12" text-anchor="middle">Python</text>
+  <rect x="130" y="707" width="75" height="24" rx="4" class="header-bar"/>
+  <text x="167.5" y="723" class="text-gray font-12" text-anchor="middle">Python</text>
   <!-- PostgreSQL -->
-  <rect x="215" y="702" width="105" height="24" rx="4" class="header-bar"/>
-  <text x="267.5" y="718" class="text-gray font-12" text-anchor="middle">PostgreSQL</text>
-  <!-- Prisma -->
-  <rect x="330" y="702" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="370" y="718" class="text-gray font-12" text-anchor="middle">Prisma</text>
+  <rect x="215" y="707" width="105" height="24" rx="4" class="header-bar"/>
+  <text x="267.5" y="723" class="text-gray font-12" text-anchor="middle">PostgreSQL</text>
   <!-- MongoDB -->
-  <rect x="420" y="702" width="85" height="24" rx="4" class="header-bar"/>
-  <text x="462.5" y="718" class="text-gray font-12" text-anchor="middle">MongoDB</text>
+  <rect x="330" y="707" width="85" height="24" rx="4" class="header-bar"/>
+  <text x="372.5" y="723" class="text-gray font-12" text-anchor="middle">MongoDB</text>
 
   <!-- Tools & DevOps Subheading -->
-  <text x="40" y="755" class="text-white font-bold font-12">Tools &amp; DevOps</text>
+  <text x="40" y="762" class="text-white font-bold font-12">Tools &amp; DevOps</text>
   <!-- Docker -->
-  <rect x="40" y="767" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="80" y="783" class="text-gray font-12" text-anchor="middle">Docker</text>
+  <rect x="40" y="774" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="80" y="790" class="text-gray font-12" text-anchor="middle">Docker</text>
   <!-- Azure -->
-  <rect x="130" y="767" width="70" height="24" rx="4" class="header-bar"/>
-  <text x="165" y="783" class="text-gray font-12" text-anchor="middle">Azure</text>
+  <rect x="130" y="774" width="70" height="24" rx="4" class="header-bar"/>
+  <text x="165" y="790" class="text-gray font-12" text-anchor="middle">Azure</text>
   <!-- Vercel -->
-  <rect x="210" y="767" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="250" y="783" class="text-gray font-12" text-anchor="middle">Vercel</text>
+  <rect x="210" y="774" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="250" y="790" class="text-gray font-12" text-anchor="middle">Vercel</text>
 
   <!-- Fake Terminal Window Footer -->
   <rect width="810" height="30" x="20" y="810" rx="6" class="header-bar"/>

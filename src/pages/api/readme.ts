@@ -81,7 +81,8 @@ async function fetchAllRepos(username: string, headers: Record<string, string>) 
 export const GET: APIRoute = async ({ url }) => {
   const username = 'kev289';
   const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN;
-  const theme = url.searchParams.get('theme') === 'light' ? 'light' : 'dark';
+  const themeParam = (url.searchParams.get('theme') || 'auto').toLowerCase();
+  const theme = ['dark', 'light', 'auto'].includes(themeParam) ? themeParam : 'auto';
 
   let totalCommits = 537;
   let longestStreak = 18;
@@ -234,26 +235,27 @@ export const GET: APIRoute = async ({ url }) => {
     console.error('Error fetching GitHub API, using fallback data:', error);
   }
 
-  const palette =
-    theme === 'light'
-      ? {
-          background: '#ffffff',
-          surface: '#f6f8fa',
-          border: '#d0d7de',
-          text: '#24292f',
-          green: '#1a7f37',
-          gray: '#57606a',
-          blue: '#0969da',
-        }
-      : {
-          background: '#0d1117',
-          surface: '#161b22',
-          border: '#30363d',
-          text: '#ffffff',
-          green: '#4AF626',
-          gray: '#8b949e',
-          blue: '#58a6ff',
-        };
+  const darkPalette = {
+    background: '#0d1117',
+    surface: '#161b22',
+    border: '#30363d',
+    text: '#e6edf3',
+    green: '#4AF626',
+    gray: '#8b949e',
+    blue: '#58a6ff',
+  };
+
+  const lightPalette = {
+    background: '#ffffff',
+    surface: '#f6f8fa',
+    border: '#d0d7de',
+    text: '#1f2328',
+    green: '#1a7f37',
+    gray: '#656d76',
+    blue: '#0969da',
+  };
+
+  const palette = theme === 'light' ? lightPalette : darkPalette;
 
   let langSvg = '';
   topLanguages.forEach((lang, index) => {
@@ -261,23 +263,60 @@ export const GET: APIRoute = async ({ url }) => {
     const rectYPos = 475 + index * 25;
     const textYPos = 483 + index * 25;
     const fillWidth = Math.round((lang.percentage / 100) * 550);
+    const bgFill = theme === 'auto' ? 'var(--surface)' : palette.surface;
+    const borderStroke = theme === 'auto' ? 'var(--border)' : palette.border;
     langSvg += `
   <!-- ${lang.name} Bar -->
   <text x="40" y="${yPos}" class="text-white font-12">${lang.name}</text>
-  <rect x="160" y="${rectYPos}" width="550" height="8" rx="4" fill="${palette.surface}" stroke="${palette.border}"/>
+  <rect x="160" y="${rectYPos}" width="550" height="8" rx="4" fill="${bgFill}" stroke="${borderStroke}"/>
   <rect x="160" y="${rectYPos}" width="${fillWidth}" height="8" rx="4" fill="${lang.color}"/>
   <text x="810" y="${textYPos}" class="text-gray font-12" text-anchor="end">${lang.percentage}%</text>`;
   });
 
+  const cssVars = `
+    :root {
+      --bg: ${darkPalette.background};
+      --surface: ${darkPalette.surface};
+      --border: ${darkPalette.border};
+      --text: ${darkPalette.text};
+      --green: ${darkPalette.green};
+      --gray: ${darkPalette.gray};
+      --blue: ${darkPalette.blue};
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: ${lightPalette.background};
+        --surface: ${lightPalette.surface};
+        --border: ${lightPalette.border};
+        --text: ${lightPalette.text};
+        --green: ${lightPalette.green};
+        --gray: ${lightPalette.gray};
+        --blue: ${lightPalette.blue};
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: ${darkPalette.background};
+        --surface: ${darkPalette.surface};
+        --border: ${darkPalette.border};
+        --text: ${darkPalette.text};
+        --green: ${darkPalette.green};
+        --gray: ${darkPalette.gray};
+        --blue: ${darkPalette.blue};
+      }
+    }
+  `;
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 860" width="100%" height="100%" lang="en">
   <style>
-    .terminal-bg { fill: ${palette.background}; }
-    .border-main { stroke: ${palette.border}; stroke-width: 1; fill: none; }
-    .header-bar { fill: ${palette.surface}; stroke: ${palette.border}; stroke-width: 1; }
-    .text-white { fill: ${palette.text}; font-family: "Courier New", Courier, monospace; }
-    .text-green { fill: ${palette.green}; font-family: "Courier New", Courier, monospace; }
-    .text-gray { fill: ${palette.gray}; font-family: "Courier New", Courier, monospace; }
-    .text-blue { fill: ${palette.blue}; font-family: "Courier New", Courier, monospace; }
+    ${theme === 'auto' ? cssVars : ''}
+    .terminal-bg { fill: ${theme === 'auto' ? 'var(--bg)' : palette.background}; }
+    .border-main { stroke: ${theme === 'auto' ? 'var(--border)' : palette.border}; stroke-width: 1; fill: none; }
+    .header-bar { fill: ${theme === 'auto' ? 'var(--surface)' : palette.surface}; stroke: ${theme === 'auto' ? 'var(--border)' : palette.border}; stroke-width: 1; }
+    .text-white { fill: ${theme === 'auto' ? 'var(--text)' : palette.text}; font-family: "Courier New", Courier, monospace; }
+    .text-green { fill: ${theme === 'auto' ? 'var(--green)' : palette.green}; font-family: "Courier New", Courier, monospace; }
+    .text-gray { fill: ${theme === 'auto' ? 'var(--gray)' : palette.gray}; font-family: "Courier New", Courier, monospace; }
+    .text-blue { fill: ${theme === 'auto' ? 'var(--blue)' : palette.blue}; font-family: "Courier New", Courier, monospace; }
 
     .font-bold { font-weight: bold; }
     .font-11 { font-size: 11px; }
@@ -313,7 +352,7 @@ export const GET: APIRoute = async ({ url }) => {
 
   <!-- Cyber Green Typewriter line -->
   <text x="40" y="155" class="text-green font-bold font-18">Full-Stack Developer <tspan class="cursor">|</tspan></text>
-  <line x1="40" y1="175" x2="810" y2="175" stroke="${palette.border}" stroke-width="1"/>
+  <line x1="40" y1="175" x2="810" y2="175" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
 
   <!-- TWO COLUMN MIDDLE GRID -->
   <!-- Left Column: About Section -->
@@ -333,7 +372,7 @@ export const GET: APIRoute = async ({ url }) => {
   <!-- Right Column: GitHub Stats Card -->
   <rect x="480" y="200" width="330" height="215" rx="8" class="header-bar"/>
   <text x="500" y="230" class="text-gray font-12">// GITHUB STATS</text>
-  <line x1="500" y1="245" x2="790" y2="245" stroke="${palette.border}" stroke-width="1"/>
+  <line x1="500" y1="245" x2="790" y2="245" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
 
   <text x="500" y="290" class="text-gray font-14">Total Contributions</text>
   <text x="790" y="290" class="text-blue font-bold font-14" text-anchor="end">${totalCommits}</text>
@@ -348,7 +387,7 @@ export const GET: APIRoute = async ({ url }) => {
   <text x="40" y="445" class="text-gray font-13">// TOP LANGUAGES</text>
   ${langSvg}
 
-  <line x1="40" y1="575" x2="810" y2="575" stroke="${palette.border}" stroke-width="1"/>
+  <line x1="40" y1="575" x2="810" y2="575" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
 
   <!-- TECH STACK SECTION -->
   <text x="40" y="600" class="text-gray font-13">// TECH STACK</text>

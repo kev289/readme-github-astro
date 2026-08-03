@@ -252,9 +252,9 @@ export const GET: APIRoute = async ({ url }) => {
 
   let langSvg = '';
   topLanguages.forEach((lang, index) => {
-    const yPos = 485 + index * 25;
-    const rectYPos = 475 + index * 25;
-    const textYPos = 483 + index * 25;
+    const yPos = 465 + index * 25;
+    const rectYPos = 455 + index * 25;
+    const textYPos = 463 + index * 25;
     const fillWidth = Math.round((lang.percentage / 100) * 550);
     const bgFill = theme === 'auto' ? 'var(--surface)' : palette.surface;
     const borderStroke = theme === 'auto' ? 'var(--border)' : palette.border;
@@ -300,7 +300,7 @@ export const GET: APIRoute = async ({ url }) => {
     }
   `;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 860" width="100%" height="100%" lang="en">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 840" width="100%" height="100%" lang="en">
   <style>
     ${theme === 'auto' ? cssVars : ''}
     .terminal-bg { fill: ${theme === 'auto' ? 'var(--bg)' : palette.background}; }
@@ -328,8 +328,8 @@ export const GET: APIRoute = async ({ url }) => {
   </style>
 
   <!-- Outer background and border -->
-  <rect width="850" height="860" class="terminal-bg" rx="10"/>
-  <rect width="848" height="858" x="1" y="1" class="border-main" rx="10"/>
+  <rect width="850" height="840" class="terminal-bg" rx="10"/>
+  <rect width="848" height="838" x="1" y="1" class="border-main" rx="10"/>
 
   <!-- Fake Terminal Window Header -->
   <rect width="810" height="30" x="20" y="20" rx="6" class="header-bar"/>
@@ -350,88 +350,85 @@ export const GET: APIRoute = async ({ url }) => {
   <!-- TWO COLUMN MIDDLE GRID -->
   <!-- Left Column: About Section -->
   <text x="40" y="205" class="text-gray font-13">// ABOUT</text>
-  <text x="40" y="235" class="text-white font-bold font-14">I build software that resolves real-world</text>
-  <text x="40" y="255" class="text-white font-bold font-14">problems - quality first, scalability second.</text>
+  <text x="40" y="235" class="text-white font-bold font-14">I build high-performance software that</text>
+  <text x="40" y="255" class="text-white font-bold font-14">resolves real-world problems.</text>
 
-  <text x="40" y="285" class="text-gray font-13">A passionate software developer from Colombia.</text>
-  <text x="40" y="305" class="text-gray font-13">I specialize in building high-performance,</text>
-  <text x="40" y="325" class="text-gray font-13">modern web applications. I enjoy solving</text>
-  <text x="40" y="345" class="text-gray font-13">complex problems and designing clean,</text>
+  <text x="40" y="285" class="text-gray font-13">Focus on DX, quality, and maintainable</text>
+  <text x="40" y="305" class="text-gray font-13">systems. Passionate software developer</text>
+  <text x="40" y="325" class="text-gray font-13">from Colombia, specializing in modern</text>
+  <text x="40" y="345" class="text-gray font-13">web applications and designing clean,</text>
   <text x="40" y="365" class="text-gray font-13">scalable system architectures.</text>
 
-  <text x="40" y="395" class="text-gray font-13">&gt; React · TypeScript · Next.js · Astro</text>
-  <text x="40" y="415" class="text-gray font-13">&gt; Node.js · PostgreSQL · Azure</text>
-
   <!-- Right Column: GitHub Stats Card -->
-  <rect x="480" y="200" width="330" height="215" rx="8" class="header-bar"/>
+  <rect x="480" y="200" width="330" height="195" rx="8" class="header-bar"/>
   <text x="500" y="230" class="text-gray font-12">// GITHUB STATS</text>
   <line x1="500" y1="245" x2="790" y2="245" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
 
-  <text x="500" y="290" class="text-gray font-14">Total Contributions</text>
-  <text x="790" y="290" class="text-blue font-bold font-14" text-anchor="end">${totalCommits}</text>
+  <text x="500" y="285" class="text-gray font-14">Total Contributions</text>
+  <text x="790" y="285" class="text-blue font-bold font-14" text-anchor="end">${totalCommits}</text>
 
-  <text x="500" y="340" class="text-gray font-14">Longest Streak</text>
-  <text x="790" y="340" class="text-blue font-bold font-14" text-anchor="end">${longestStreak} days</text>
+  <text x="500" y="330" class="text-gray font-14">Longest Streak</text>
+  <text x="790" y="330" class="text-blue font-bold font-14" text-anchor="end">${longestStreak} days</text>
 
-  <text x="500" y="390" class="text-gray font-14">Current Streak</text>
-  <text x="790" y="390" class="text-blue font-bold font-14" text-anchor="end">${currentStreak} days</text>
+  <text x="500" y="375" class="text-gray font-14">Current Streak</text>
+  <text x="790" y="375" class="text-blue font-bold font-14" text-anchor="end">${currentStreak} days</text>
 
   <!-- TOP LANGUAGES SECTION -->
-  <text x="40" y="445" class="text-gray font-13">// TOP LANGUAGES</text>
+  <text x="40" y="425" class="text-gray font-13">// TOP LANGUAGES</text>
   ${langSvg}
 
-  <line x1="40" y1="575" x2="810" y2="575" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
+  <line x1="40" y1="555" x2="810" y2="555" stroke="${theme === 'auto' ? 'var(--border)' : palette.border}" stroke-width="1"/>
 
   <!-- TECH STACK SECTION -->
-  <text x="40" y="600" class="text-gray font-13">// TECH STACK</text>
+  <text x="40" y="580" class="text-gray font-13">// TECH STACK</text>
 
   <!-- Frontend Development Subheading -->
-  <text x="40" y="628" class="text-white font-bold font-12">Frontend Development</text>
+  <text x="40" y="608" class="text-white font-bold font-12">Frontend Development</text>
   <!-- TypeScript -->
-  <rect x="40" y="640" width="100" height="24" rx="4" class="header-bar"/>
-  <text x="90" y="656" class="text-gray font-12" text-anchor="middle">TypeScript</text>
+  <rect x="40" y="620" width="100" height="24" rx="4" class="header-bar"/>
+  <text x="90" y="636" class="text-gray font-12" text-anchor="middle">TypeScript</text>
   <!-- React -->
-  <rect x="150" y="640" width="70" height="24" rx="4" class="header-bar"/>
-  <text x="185" y="656" class="text-gray font-12" text-anchor="middle">React</text>
+  <rect x="150" y="620" width="70" height="24" rx="4" class="header-bar"/>
+  <text x="185" y="636" class="text-gray font-12" text-anchor="middle">React</text>
   <!-- Next.js -->
-  <rect x="230" y="640" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="270" y="656" class="text-gray font-12" text-anchor="middle">Next.js</text>
+  <rect x="230" y="620" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="270" y="636" class="text-gray font-12" text-anchor="middle">Next.js</text>
   <!-- Tailwind CSS -->
-  <rect x="320" y="640" width="105" height="24" rx="4" class="header-bar"/>
-  <text x="372.5" y="656" class="text-gray font-12" text-anchor="middle">Tailwind CSS</text>
+  <rect x="320" y="620" width="105" height="24" rx="4" class="header-bar"/>
+  <text x="372.5" y="636" class="text-gray font-12" text-anchor="middle">Tailwind CSS</text>
 
   <!-- Backend & Databases Subheading -->
-  <text x="40" y="695" class="text-white font-bold font-12">Backend &amp; Databases</text>
+  <text x="40" y="675" class="text-white font-bold font-12">Backend &amp; Databases</text>
   <!-- Node.js -->
-  <rect x="40" y="707" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="80" y="723" class="text-gray font-12" text-anchor="middle">Node.js</text>
+  <rect x="40" y="687" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="80" y="703" class="text-gray font-12" text-anchor="middle">Node.js</text>
   <!-- Python -->
-  <rect x="130" y="707" width="75" height="24" rx="4" class="header-bar"/>
-  <text x="167.5" y="723" class="text-gray font-12" text-anchor="middle">Python</text>
+  <rect x="130" y="687" width="75" height="24" rx="4" class="header-bar"/>
+  <text x="167.5" y="703" class="text-gray font-12" text-anchor="middle">Python</text>
   <!-- PostgreSQL -->
-  <rect x="215" y="707" width="105" height="24" rx="4" class="header-bar"/>
-  <text x="267.5" y="723" class="text-gray font-12" text-anchor="middle">PostgreSQL</text>
+  <rect x="215" y="687" width="105" height="24" rx="4" class="header-bar"/>
+  <text x="267.5" y="703" class="text-gray font-12" text-anchor="middle">PostgreSQL</text>
   <!-- MongoDB -->
-  <rect x="330" y="707" width="85" height="24" rx="4" class="header-bar"/>
-  <text x="372.5" y="723" class="text-gray font-12" text-anchor="middle">MongoDB</text>
+  <rect x="330" y="687" width="85" height="24" rx="4" class="header-bar"/>
+  <text x="372.5" y="703" class="text-gray font-12" text-anchor="middle">MongoDB</text>
 
   <!-- Tools & DevOps Subheading -->
-  <text x="40" y="762" class="text-white font-bold font-12">Tools &amp; DevOps</text>
+  <text x="40" y="742" class="text-white font-bold font-12">Tools &amp; DevOps</text>
   <!-- Docker -->
-  <rect x="40" y="774" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="80" y="790" class="text-gray font-12" text-anchor="middle">Docker</text>
+  <rect x="40" y="754" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="80" y="770" class="text-gray font-12" text-anchor="middle">Docker</text>
   <!-- Azure -->
-  <rect x="130" y="774" width="70" height="24" rx="4" class="header-bar"/>
-  <text x="165" y="790" class="text-gray font-12" text-anchor="middle">Azure</text>
+  <rect x="130" y="754" width="70" height="24" rx="4" class="header-bar"/>
+  <text x="165" y="770" class="text-gray font-12" text-anchor="middle">Azure</text>
   <!-- Vercel -->
-  <rect x="210" y="774" width="80" height="24" rx="4" class="header-bar"/>
-  <text x="250" y="790" class="text-gray font-12" text-anchor="middle">Vercel</text>
+  <rect x="210" y="754" width="80" height="24" rx="4" class="header-bar"/>
+  <text x="250" y="770" class="text-gray font-12" text-anchor="middle">Vercel</text>
 
   <!-- Fake Terminal Window Footer -->
-  <rect width="810" height="30" x="20" y="810" rx="6" class="header-bar"/>
-  <circle cx="35" cy="825" r="6" fill="#ff5f56"/>
-  <circle cx="55" cy="825" r="6" fill="#ffbd2e"/>
-  <circle cx="75" cy="825" r="6" fill="#27c93f"/>
+  <rect width="810" height="30" x="20" y="790" rx="6" class="header-bar"/>
+  <circle cx="35" cy="805" r="6" fill="#ff5f56"/>
+  <circle cx="55" cy="805" r="6" fill="#ffbd2e"/>
+  <circle cx="75" cy="805" r="6" fill="#27c93f"/>
 </svg>`;
 
   return new Response(svg, {

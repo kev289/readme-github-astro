@@ -60,23 +60,7 @@ function getLanguageColor(lang: string): string {
   return LANGUAGE_COLORS[lang] || hashStringToColor(lang);
 }
 
-async function fetchAllRepos(username: string, headers: Record<string, string>) {
-  const allRepos: any[] = [];
-  let page = 1;
-  while (true) {
-    const res = await fetch(
-      `https://api.github.com/users/${username}/repos?per_page=100&page=${page}`,
-      { headers }
-    );
-    if (!res.ok) break;
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) break;
-    allRepos.push(...data);
-    if (data.length < 100) break;
-    page++;
-  }
-  return allRepos;
-}
+
 
 export const GET: APIRoute = async ({ url }) => {
   const username = 'kev289';
@@ -104,43 +88,6 @@ export const GET: APIRoute = async ({ url }) => {
   }
 
   try {
-    const allRepos = await fetchAllRepos(username, headers);
-
-    if (allRepos.length > 0) {
-      const activeRepos = allRepos.filter(
-        (repo: any) => !repo.fork && !repo.archived
-      );
-
-      const languageCounts: Record<string, number> = {};
-      activeRepos.forEach((repo: any) => {
-        if (repo.language) {
-          languageCounts[repo.language] =
-            (languageCounts[repo.language] || 0) + 1;
-        }
-      });
-
-      const totalReposWithLanguage = Object.values(languageCounts).reduce(
-        (a, b) => a + b,
-        0
-      );
-      if (totalReposWithLanguage > 0) {
-        const sortedLanguages = Object.entries(languageCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 4);
-
-        topLanguages = sortedLanguages.map(([name, count]) => {
-          const percentage = Math.round(
-            (count / totalReposWithLanguage) * 100
-          );
-          return {
-            name,
-            percentage,
-            color: getLanguageColor(name),
-          };
-        });
-      }
-    }
-
     if (token && token !== 'your_github_token_here') {
       const graphqlQuery = {
         query: `
@@ -153,6 +100,19 @@ export const GET: APIRoute = async ({ url }) => {
                     contributionDays {
                       date
                       contributionCount
+                    }
+                  }
+                }
+              }
+              repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: {field: UPDATED_AT, direction: DESC}) {
+                nodes {
+                  languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                    edges {
+                      size
+                      node {
+                        name
+                        color
+                      }
                     }
                   }
                 }
@@ -175,60 +135,93 @@ export const GET: APIRoute = async ({ url }) => {
 
       if (graphqlRes.ok) {
         const graphqlData = await graphqlRes.json();
-        const calendar =
-          graphqlData?.data?.user?.contributionsCollection
-            ?.contributionCalendar;
-        if (calendar) {
-          totalCommits = calendar.totalContributions;
+        const userNode = graphqlData?.data?.user;
 
-          const days: { date: string; contributionCount: number }[] = [];
-          calendar.weeks.forEach((w: any) => {
-            if (w.contributionDays) {
-              w.contributionDays.forEach((d: any) => {
-                days.push(d);
-              });
-            }
-          });
+        if (userNode) {
+          const calendar = userNode.contributionsCollection?.contributionCalendar;
+          if (calendar) {
+            totalCommits = calendar.totalContributions;
 
-          days.sort(
-            (a, b) =>
-              new Date(a.date).getTime() - new Date(b.date).getTime()
-          );
-
-          let calculatedLongest = 0;
-          let tempStreak = 0;
-
-          for (let i = 0; i < days.length; i++) {
-            if (days[i].contributionCount > 0) {
-              tempStreak++;
-              if (tempStreak > calculatedLongest) {
-                calculatedLongest = tempStreak;
+            const days: { date: string; contributionCount: number }[] = [];
+            calendar.weeks.forEach((w: any) => {
+              if (w.contributionDays) {
+                w.contributionDays.forEach((d: any) => {
+                  days.push(d);
+                });
               }
-            } else {
-              tempStreak = 0;
+            });
+
+            days.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+            let calculatedLongest = 0;
+            let tempStreak = 0;
+
+            for (let i = 0; i < days.length; i++) {
+              if (days[i].contributionCount > 0) {
+                tempStreak++;
+                if (tempStreak > calculatedLongest) {
+                  calculatedLongest = tempStreak;
+                }
+              } else {
+                tempStreak = 0;
+              }
             }
-          }
-          longestStreak = calculatedLongest;
+            longestStreak = calculatedLongest;
 
-          let calculatedCurrent = 0;
-          let curIndex = days.length - 1;
+            let calculatedCurrent = 0;
+            let curIndex = days.length - 1;
 
-          if (curIndex >= 0) {
-            const lastDay = days[curIndex];
-            if (lastDay.contributionCount === 0 && curIndex > 0) {
-              const prevDay = days[curIndex - 1];
-              if (prevDay.contributionCount > 0) {
+            if (curIndex >= 0) {
+              const lastDay = days[curIndex];
+              if (lastDay.contributionCount === 0 && curIndex > 0) {
+                const prevDay = days[curIndex - 1];
+                if (prevDay.contributionCount > 0) {
+                  curIndex--;
+                }
+              }
+              while (curIndex >= 0 && days[curIndex].contributionCount > 0) {
+                calculatedCurrent++;
                 curIndex--;
               }
             }
+            currentStreak = calculatedCurrent;
+          }
 
-            while (curIndex >= 0 && days[curIndex].contributionCount > 0) {
-              calculatedCurrent++;
-              curIndex--;
+          const repos = userNode.repositories?.nodes;
+          if (repos && repos.length > 0) {
+            const langSizeMap: Record<string, { size: number; color: string }> = {};
+            let totalSize = 0;
+
+            repos.forEach((repo: any) => {
+              if (repo.languages && repo.languages.edges) {
+                repo.languages.edges.forEach((edge: any) => {
+                  const langName = edge.node.name;
+                  const langColor = edge.node.color || getLanguageColor(langName);
+                  
+                  if (!langSizeMap[langName]) {
+                    langSizeMap[langName] = { size: 0, color: langColor };
+                  }
+                  langSizeMap[langName].size += edge.size;
+                  totalSize += edge.size;
+                });
+              }
+            });
+
+            if (totalSize > 0) {
+              topLanguages = Object.entries(langSizeMap)
+                .map(([name, data]) => ({
+                  name,
+                  percentage: Math.round((data.size / totalSize) * 100),
+                  color: data.color,
+                }))
+                .filter(lang => lang.percentage > 0)
+                .sort((a, b) => b.percentage - a.percentage)
+                .slice(0, 4);
             }
           }
-          currentStreak = calculatedCurrent;
         }
+      } else {
+        console.error('GraphQL Error:', await graphqlRes.text());
       }
     }
   } catch (error) {
@@ -445,8 +438,7 @@ export const GET: APIRoute = async ({ url }) => {
     status: 200,
     headers: {
       'Content-Type': 'image/svg+xml',
-      'Cache-Control':
-        'public, max-age=300, s-maxage=300, stale-while-revalidate=60',
+      'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=30',
     },
   });
 };
